@@ -39,9 +39,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |  $autoload['packages'] = array(APPPATH.'third_party', '/usr/local/shared');
 |
 */
-$autoload['packages'] = array(
-	APPPATH.'third_party/DevelBar', 
-);
+$autoload['packages'] = array();
 
 /*
 | -------------------------------------------------------------------
@@ -91,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url', 'dev', 'general');
+$autoload['helper'] = array('url', 'general');
 
 /*
 | -------------------------------------------------------------------

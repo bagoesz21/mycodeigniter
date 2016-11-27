@@ -1,0 +1,28 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+$lang['version_not_supported'] = 'Versi CodeIgniter tidak cocok dengan DevelBar, Silahkan cek update %s.';
+$lang['sec'] = 'detik';
+$lang['request'] = 'Request';
+$lang['method'] = 'Method';
+$lang['controller'] = 'Controller';
+$lang['action'] = 'Action';
+$lang['function'] = 'Function';
+$lang['parameters'] = 'Parameters';
+$lang['database'] = 'Database';
+$lang['total_execution_time'] = 'Total Waktu Eksekusi';
+$lang['no_queries'] = 'Tidak Eksekusi Query';
+$lang['benchmarks'] = 'Benchmarks';
+$lang['hooks'] = 'Hooks';
+$lang['libraries'] = 'Libraries';
+$lang['config'] = 'Konfig';
+$lang['session'] = 'Session';
+$lang['helpers'] = 'Helper';
+$lang['views'] = 'Views';
+$lang['models'] = 'Models';
+$lang['memory_usage'] = 'Memory usage';
+$lang['ci_version'] = 'CodeIgniter versi : %s';
+$lang['info'] = 'Info';
+$lang['update_message'] = 'Update tersedia %s';
+$lang['develbar_version'] = 'DevelBar versi : %s';
+$lang['php_version'] = 'PHP versi : %s';
+$lang['default_language'] = 'Bahasa default : %s';
