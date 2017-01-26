@@ -872,6 +872,7 @@ class MY_Model extends CI_Model
         if(isset($data) && $data !== FALSE)
         {
             $this->_database->reset_query();
+            if(isset($this->_cache)) unset($this->_cache);
             return $data;
         }
         else
@@ -892,13 +893,13 @@ class MY_Model extends CI_Model
             {
                 $this->where($where);
             }
-	    elseif($this->soft_deletes===TRUE)
+            elseif($this->soft_deletes===TRUE)
             {
                 $this->_where_trashed();
             }
             $this->limit(1);
             $query = $this->_database->get($this->table);
-	    $this->_reset_trashed();
+            $this->_reset_trashed();
             if ($query->num_rows() == 1)
             {
                 $row = $query->row_array();
@@ -923,12 +924,15 @@ class MY_Model extends CI_Model
      */
     public function get_all($where = NULL)
     {
+
         $data = $this->_get_from_cache();
 
         if(isset($data) && $data !== FALSE)
         {
             $this->_database->reset_query();
+            if(isset($this->_cache)) unset($this->_cache);
             return $data;
+
         }
         else
         {
@@ -953,7 +957,7 @@ class MY_Model extends CI_Model
                 }
             }
             $query = $this->_database->get($this->table);
-	    $this->_reset_trashed();
+            $this->_reset_trashed();
             if($query->num_rows() > 0)
             {
                 $data = $query->result_array();
@@ -981,13 +985,13 @@ class MY_Model extends CI_Model
         {
             $this->where($where);
         }
-	elseif($this->soft_deletes===TRUE)
+        elseif($this->soft_deletes===TRUE)
         {
             $this->_where_trashed();
         }
         $this->_database->from($this->table);
         $number_rows = $this->_database->count_all_results();
-	$this->_reset_trashed();
+        $this->_reset_trashed();
         return $number_rows;
     }
 
@@ -1197,7 +1201,7 @@ class MY_Model extends CI_Model
                     {
                         if($request['parameters']['fields'] == '*count*')
                         {
-                            $this->_database->select('COUNT(`'.$foreign_table.'`*) as counted_rows, `' . $foreign_table . '`.`' . $foreign_key . '`', FALSE);
+                            $this->_database->select('COUNT(`'.$foreign_table.'`.`'.$foreign_key.'`) as counted_rows, `' . $foreign_table . '`.`' . $foreign_key . '`', FALSE);
                         }
                         else
                         {
@@ -1247,7 +1251,7 @@ class MY_Model extends CI_Model
                         $the_local_key = $result_array[$pivot_local_key];
                         if(isset($get_relate) and $get_relate === TRUE)
                         {
-                            $subs[$the_local_key][$the_foreign_key] = $this->{$relation['foreign_model']}->where($local_key, $result[$local_key])->get();
+                            $subs[$the_local_key][$the_foreign_key] = $this->{$relation['foreign_model']}->where($foreign_key, $result[$foreign_key])->get();
                         }
                         else
                         {
@@ -1361,7 +1365,7 @@ class MY_Model extends CI_Model
                         }
                         else
                         {
-                            if($this->_is_assoc($relation))
+                            if($this->is_assoc($relation))
                             {
                                 $foreign_model = $relation['foreign_model'];
                                 if(array_key_exists('foreign_table',$relation))
@@ -1677,7 +1681,7 @@ class MY_Model extends CI_Model
     {
         $this->load->driver('cache');
         $prefix = (strlen($this->cache_prefix)>0) ? $this->cache_prefix.'_' : '';
-		$prefix .= $this->table.'_';
+        $prefix .= $this->table.'_';
         if(isset($string) && (strpos($string,'*') === FALSE))
         {
             $this->cache->{$this->cache_driver}->delete($prefix . $string);
@@ -1948,14 +1952,14 @@ class MY_Model extends CI_Model
      * @param array $array
      * @return bool
      */
-    private function _is_assoc(array $array) {
+    protected function is_assoc(array $array) {
         return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
     /**
      * private function _parse_model_dir($foreign_model)
      *
-     * Parse model and model folder 
+     * Parse model and model folder
      * @param $foreign_model
      * @return $data
      */
