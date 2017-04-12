@@ -8,7 +8,7 @@
 | This option allows you to enable the developer's Toolbar
 |
 */
-$config['enable_develbar'] = (ENVIRONMENT !== 'production') ? true : false;
+$config['enable_develbar'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +21,9 @@ $config['enable_develbar'] = (ENVIRONMENT !== 'production') ? true : false;
 */
 $config['check_update'] = FALSE;
 
-$config['documentation_link'] = "http://".$_SERVER['HTTP_HOST'].str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']).'/user_guide/';
+$config['profiler_key_expiration_time'] = 1800; // sec
+
+$config['documentation_link'] = 'http://www.codeigniter.com/userguide3/';
 
 $config['ci_website'] = 'http://www.codeigniter.com';
 
@@ -47,10 +49,11 @@ $config['develbar_sections'] = array(
     'Request'   		=> TRUE,
     'Database'			=> TRUE,
     'Hooks'				=> TRUE,
-	'Config' 			=> TRUE,
-    'Session' 			=> TRUE,
-    'Views' 			=> TRUE,
-    'Models' 			=> TRUE,
+    'Ajax' 			    => TRUE,
     'Libraries'			=> TRUE,
     'Helpers' 			=> TRUE,
+    'Views' 			=> TRUE,
+    'Config' 			=> TRUE,
+    'Session' 			=> TRUE,
+    'Models' 			=> TRUE,
 );
