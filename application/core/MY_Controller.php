@@ -20,11 +20,12 @@ class MY_Controller extends CI_Controller {
 	protected $tpl_sidebar = "sidebar";
 	protected $tpl_rightbar = "";
 	protected $tpl_layout = "layout";
-	protected $tpl_footer = "";
+	protected $tpl_footer = "footer";
 	protected $enabled_meta = false;
 	protected $enabled_breadcrumbs = false;
 	protected $autoTitle = true;
 	protected $web_title = "MYCODEIGNITER";
+	protected $logged_user = array();
 
 	protected function info(){
 		$this->data['title'] = $this->web_title;
@@ -35,16 +36,17 @@ class MY_Controller extends CI_Controller {
 
 		$this->data['json'] = "";
 
-		$this->data['header']= "";
-		$this->data['content'] 	= "";
-		$this->data['sidebar']	= "";
-		$this->data['rightbar']	= "";
-		$this->data['footer']	= "";
+		$this->data['header']= array();
+		$this->data['content'] 	= array();
+		$this->data['sidebar']	= array();
+		$this->data['rightbar']	= array();
+		$this->data['footer']	= array();
 
 		$this->data['header']['site_title'] = "";
 		$this->data['content']['breadcrumb'] = "";
 
 		$this->set_global_info("body_class", "nav-md");
+		$this->data['sidebar']['active_menu'] = uri_string();
 	}
 
 	protected function meta_info(){
@@ -103,7 +105,10 @@ class MY_Controller extends CI_Controller {
         		$this->data['content']['breadcrumb'] = $this->breadcrumbs->show();
         	}
 
-			$this->data["_header"] = $this->load->view($this->tpl_header, $this->data['header'],true);
+			if(!empty($this->tpl_header)){
+				$this->data["_header"] = $this->load->view($this->tpl_header, $this->data['header'],true);
+			}
+
 			if(!empty($content_data)){
 				foreach ($content_data as $key => $value) {
 					$this->data["content"][$key] = $value;
@@ -138,7 +143,7 @@ class MY_Controller extends CI_Controller {
 			return;
 		}
 		$this->load->library('breadcrumbs');
-		$this->breadcrumbs->push('Dashboard', '#dashboard');
+		$this->breadcrumbs->push('Home', '#');
 	}
 
 	protected function render_ajax($view) {
@@ -189,7 +194,7 @@ class MY_Controller extends CI_Controller {
 		return $this->web_title." ~ ".ucwords($val);
 	}
 
-	private function isLogin(){
+	public function isLogin(){
 		if( $this->session->has_userdata('id_user') == FALSE ) {
 			return redirect(site_url('login'));
 		}
@@ -203,6 +208,9 @@ class MY_Controller extends CI_Controller {
 			return redirect(site_url('logout'));
 		}
 
-		$this->data["header"]["user"] = $user;
+		$this->logged_user = $user;
+
+		$this->data["header"]["user"] = $this->logged_user;
+		$this->data["content"]["logged_user"] = $this->logged_user;
 	}
 }
