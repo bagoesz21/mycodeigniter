@@ -33,3 +33,22 @@
             echo "</pre>";
         }
     }
+
+    /**
+     * 
+     *
+     */
+    if ( ! function_exists('dd'))
+    {
+        function dd() {
+           $args = func_get_args();
+            echo "<pre>";
+            foreach ($args as $k => $v) {
+                echo "dpr".($k + 1).":\n";
+                print_r($v);
+                echo "\n";
+            }
+            echo "</pre>";
+            die;
+        }
+    }
