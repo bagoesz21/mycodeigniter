@@ -38,7 +38,7 @@ class Develbar
     /**
      * DevelBar version
      */
-    const VERSION = '1.0';
+    const VERSION = '1.2';
 
     /**
      * Supported CI version
@@ -193,8 +193,21 @@ class Develbar
                 }
             }
 
+
             $output = $this->CI->output->get_output();
-            $output = preg_replace('|</body>.*?</html>|is', '', $output, -1, $count) . $this->develbar_output();
+            $develBarOutput = $this->develbar_output();
+
+            // Patch for Pace.js or similar
+            if (true == $this->default_options['develbar_sections']['Ajax']) {
+                $js = $this->CI->load->file($this->assets_folder.'js/ajax.js', true);
+                $js = '<script type="text/javascript">'.$js.'</script>';
+                $output = preg_replace('|<head>(.*?)<\/head>|is', '<head>'.$js.'$1</head>', $output, 1, $count);
+                if (!$count) {
+                    $output = preg_replace('|(<script)|is', $js.'$1', $output, 1);
+                }
+            }
+            // END Patch
+            $output = preg_replace('|</body>.*?</html>|is', '', $output, -1, $count) . $develBarOutput;
 
             if ($count > 0) {
                 $output .= '</body></html>';
@@ -352,12 +365,26 @@ class Develbar
                 if ($cobject instanceof CI_DB) {
                     $controller = &get_instance();
                     if ($controller instanceof CI_Controller) {
-                        $dbs[get_class($this->CI) . ':$' . $name] = $cobject;
+                        $database = array(
+                            'database' => $cobject->database,
+                            'hostname' => $cobject->hostname,
+                            'queries' => $cobject->queries,
+                            'query_times' => $cobject->query_times,
+                            'query_count' => $cobject->query_count,
+                        );
+                        $dbs[get_class($this->CI) . ':$' . $name] = $database;
                     }
                 } elseif ($cobject instanceof CI_Model) {
                     foreach (get_object_vars($cobject) as $mname => $mobject) {
                         if ($mobject instanceof CI_DB) {
-                            $dbs[get_class($cobject) . ':$' . $mname] = $mobject;
+                            $database = array(
+                                'database' => $mobject->database,
+                                'hostname' => $mobject->hostname,
+                                'queries' => $mobject->queries,
+                                'query_times' => $mobject->query_times,
+                                'query_count' => $mobject->query_count,
+                            );
+                            $dbs[get_class($cobject) . ':$' . $mname] = $database;
                         }
                     }
                 }
@@ -390,14 +417,16 @@ class Develbar
             if (!isset($_hooks[0])) {
                 $_hooks = array($_hooks);
             }
-
             foreach ($_hooks as $hook) {
-                if (class_exists($hook['class']) && get_class($this) != $hook['class']) {
+                if (!array_key_exists('class', $hook)) {
+                    $hooks[$hook_point][] = $hook;
+                    $total_hooks++;
+                }
+                elseif (class_exists($hook['class']) && get_class($this) != $hook['class']) {
                     $hooks[$hook_point][] = $hook;
                     $total_hooks++;
                 }
             }
-
         }
 
         $data = array(
@@ -549,7 +578,7 @@ class Develbar
     {
         $data = array(
             'icon' => $data['icon'] = image_base64_encode($this->assets_folder . 'images/ajax.png'),
-            'js' => $this->CI->load->file($this->assets_folder . 'js/ajax.js', true),
+            //'js' => $this->CI->load->file($this->assets_folder . 'js/ajax.js', true),
         );
 
         return $this->CI->load->view($this->view_folder . 'ajax', $data, true);

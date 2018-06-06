@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    <?php echo $js ?>
+    var cidvl_siteurl = '<?php echo site_url(); ?>';
 </script>
 <img src="<?php echo $icon ?>" alt="<?php echo lang('ajax_requests') ?>"
      title="<?php echo lang('ajax_requests') ?>"/> <span class="ci-toolbar-ajax-requests"></span>
