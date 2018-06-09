@@ -13,6 +13,10 @@ class MY_Controller extends CI_Controller {
 	* - $this->data['json'] = var $data utk json
 	* - var $data (title, description, keywords, author) sbg global info site.
 	*  header, sidebar, rightbar, footer kosongkan bila tdk ingin dirender
+	* @ackage		MY_Controller
+	* @version		1.0
+	* @author 		beep
+	* @copyright 	Copyright (c) 2018, beep
 	 */
 	protected $data = Array();
 
@@ -50,29 +54,54 @@ class MY_Controller extends CI_Controller {
 	}
 
 	protected function meta_info(){
-		$this->data["meta"] = array();
+		if(!$this->enabled_meta)return;
 
-		if(!$this->enabled_meta){
-			return;
-		}
+		$this->load->helper("html_helper");
 
-		$this->data["meta"]['title'] = "";
-		$this->data["meta"]['description'] = "";
-		$this->data["meta"]['keywords'] = "";
-		$this->data["meta"]['author'] = "BAGOESZ21";
+		$basic_meta = array(
+		        array(
+		                'name' => 'title',
+		                'content' => $this->web_title,
+		        ),
+		        array(
+		                'name' => 'description',
+		                'content' => ''
+		        ),
+		        array(
+		                'name' => 'keywords',
+		                'content' => 'web, webbase'
+		        ),
+		        array(
+		                'name' => 'author',
+		                'content' => ''
+		        ),
+		        array(
+		                'name' => 'Content-type',
+		                'content' => 'text/html; charset=utf-8', 'type' => 'equiv'
+		        )
+		);
 
-		$this->data["meta"]['og']["locale"] = "en_US";
-		$this->data["meta"]['og']["type"] = "website";
-		$this->data["meta"]['og']["title"] = "";
-		$this->data["meta"]['og']["description"] = "";
-		$this->data["meta"]['og']["url"] = "";
-		$this->data["meta"]['og']["site_name"] = "";
-		$this->data["meta"]['og']["image"] = "";
+		$this->data["meta"] = meta($basic_meta);
 
-		$this->data["meta"]['twitter']["card"] = "summary";
-		$this->data["meta"]['twitter']["title"] = "";
-		$this->data["meta"]['twitter']["description"] = "";
-		$this->data["meta"]['twitter']["image"] = "";
+		$this->og_meta();
+	}
+
+	public function og_meta(){
+		require(APPPATH.'/libraries/og/open-graph-protocol.php');
+
+		$ogp = new OpenGraphProtocol();
+		$ogp->setLocale('id_ID');
+		$ogp->setSiteName($this->web_title);
+		$ogp->setTitle($this->data['title']);
+		$ogp->setDescription($this->web_title);
+		$ogp->setType( 'website' );
+		$ogp->setURL( site_url('/') );
+		$image = new OpenGraphProtocolImage();
+		$image->setURL( assets_url('logo_unitomo.jpg') );
+		$image->setType( 'image/jpg' );
+		$ogp->addImage($image);
+		//dpr($ogp->toHTML());
+		$this->data["og_meta"] = $ogp->toHTML();
 	}
 
 	public function __construct()
