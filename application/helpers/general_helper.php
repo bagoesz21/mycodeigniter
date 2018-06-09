@@ -546,3 +546,23 @@ if ( ! function_exists('no_data_table'))
         return "<tr><td colspan='".$col."' class='text-center'><b>Tidak ada data</b></td></tr>";
     }
 }
+
+if ( ! function_exists('generate_code'))
+{
+    function generate_code($strcount = 5, $numcount = 5) {
+        $character_set_array = array( );
+        $character_set_array[ ] = array( 'count' => $strcount, 'characters' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' );
+        $character_set_array[ ] = array( 'count' => $numcount, 'characters' => '0123456789' );
+        $temp_array = array( );
+        foreach ( $character_set_array as $character_set )
+        {
+            for ( $i = 0; $i < $character_set[ 'count' ]; $i++ )
+            {
+                $temp_array[ ] = $character_set[ 'characters' ][ rand( 0, strlen( $character_set[ 'characters' ] ) - 1 ) ];
+            }
+        }
+        shuffle( $temp_array );
+
+        return implode( '', $temp_array );
+    }
+}
